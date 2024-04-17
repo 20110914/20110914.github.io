@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirect</title>
+    <script>
+        window.onload = function() {
+            var path = window.location.pathname;
+            // 移除 '/like/' 前缀，只保留后面的部分
+            var redirectPath = path.replace(/^\/like\//, '');
+            var redirectUrl = 'http://m.9526498.xyz' + redirectPath;
+            window.location.href = redirectUrl;
+        }
+    </script>
+</head>
+<body>
+      <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .error-message {
+      font-size: 100px;
+      color: #555;
+    }
+
+    .error-description {
+      font-size: 24px;
+      color: #777;
+      margin-top: 16px;
+    }
+      </style>
+      <div class="container">
+          <div class="error-message">301</div>
+          <div class="error-description">链接正在跳转中……</div>
+</div>
+       <style>
+    @font-face {
+        font-family:Tahoma,Helvetica,Arial,"\5b8b\4f53",sans-serif;}
+
+    body {
+        font-family:Tahoma,Helvetica,Arial,"\5b8b\4f53",sans-serif;}
+       </style>
+</body>
+</html>
