@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirect</title>
-    <script>
-        window.onload = function() {
-            var path = window.location.pathname;
-            // 移除 '/like/' 前缀，只保留后面的部分
-            var redirectPath = path.replace(/^\/like\//, '');
-            var redirectUrl = 'http://m.9526498.xyz' + redirectPath;
-            window.location.href = redirectUrl;
-        }
-    </script>
 </head>
 <body>
-      <style>
+    <script>
+        window.onload = function() {
+            var path = window.location.pathname; // 获取当前路径
+            var redirectUrl = 'http://m.9526498.xyz' + path; // 构造重定向URL
+            window.location.href = redirectUrl; // 重定向到新的URL
+        };
+    </script>
+    <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f0f0;
