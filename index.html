@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈幼楚的主页</title>
+    <style>
+        /* 极简样式 - 无边框、无间距、全屏显示 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+        
+        /* iframe全屏填充 */
+        #websiteFrame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+        
+        /* 加载指示器（仅在加载过程中显示） */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 隐藏加载指示器 */
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* 极小控制面板（鼠标悬停时显示） */
+        .control-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 4px;
+            padding: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        body:hover .control-panel {
+            opacity: 1;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- 目标网站框架 -->
+    <iframe id="websiteFrame" 
+            allowfullscreen 
+            allow="autoplay; camera; microphone; display-capture"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+    
+    <!-- 加载指示器 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <!-- 极简控制面板 -->
+    <div class="control-panel">
+        <button class="control-btn" id="fullscreenBtn" title="F11">全屏</button>
+        <button class="control-btn" id="reloadBtn" title="F5">刷新</button>
+    </div>
+    
+    <script>
+        // 目标网址 - 直接使用明文URL
+        const targetUrl = "http://www.2011914.xyz/";
+        
+        // 获取DOM元素
+        const iframe = document.getElementById('websiteFrame');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const reloadBtn = document.getElementById('reloadBtn');
+        
+        // 页面初始化
+        function init() {
+            // 立即设置iframe源
+            iframe.src = targetUrl;
+            
+            // 监听iframe加载完成
+            iframe.addEventListener('load', () => {
+                // 延迟隐藏加载指示器，确保内容完全渲染
+                setTimeout(() => {
+                    loadingOverlay.classList.add('hidden');
+                    // 完全移除加载指示器
+                    setTimeout(() => {
+                        loadingOverlay.style.display = 'none';
+                    }, 300);
+                }, 300);
+            });
+            
+            // 监听iframe加载错误
+            iframe.addEventListener('error', () => {
+                loadingOverlay.innerHTML = '<div style="color:white; text-align:center;">加载失败，请检查网络连接</div>';
+            });
+            
+            // 全屏按钮点击事件
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            // 刷新按钮点击事件
+            reloadBtn.addEventListener('click', () => {
+                iframe.src = iframe.src; // 重新加载
+                loadingOverlay.style.display = 'flex';
+                loadingOverlay.classList.remove('hidden');
+            });
+            
+            // 键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                // F11 切换全屏
+                if (e.key === 'F11') {
+                    e.preventDefault();
+                    toggleFullscreen();
+                }
+                // F5 刷新页面
+                if (e.key === 'F5') {
+                    e.preventDefault();
+                    iframe.src = iframe.src;
+                    loadingOverlay.style.display = 'flex';
+                    loadingOverlay.classList.remove('hidden');
+                }
+                // ESC 退出全屏
+                if (e.key === 'Escape' && isFullscreen()) {
+                    exitFullscreen();
+                }
+            });
+            
+            // 尝试自动进入全屏（需要用户手势触发，所以这里只是准备功能）
+            // 注意：现代浏览器不允许自动全屏，必须由用户手势触发
+        }
+        
+        // 全屏功能函数
+        function toggleFullscreen() {
+            if (isFullscreen()) {
+                exitFullscreen();
+            } else {
+                enterFullscreen();
+            }
+        }
+        
+        function enterFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        }
+        
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+        
+        function isFullscreen() {
+            return !!(document.fullscreenElement || 
+                     document.webkitFullscreenElement || 
+                     document.msFullscreenElement);
+        }
+        
+        // 监听全屏变化
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('msfullscreenchange', updateFullscreenButton);
+        
+        function updateFullscreenButton() {
+            fullscreenBtn.textContent = isFullscreen() ? '退出全屏' : '全屏';
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', init);
+        
+        // 如果用户与页面交互，尝试自动进入全屏（需要用户手势）
+        document.addEventListener('click', attemptAutoFullscreen, { once: true });
+        
+        function attemptAutoFullscreen() {
+            // 只有在用户点击页面后才尝试全屏
+            enterFullscreen();
+        }
+    </script>
+</body>
+</html>
